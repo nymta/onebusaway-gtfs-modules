@@ -28,16 +28,27 @@ public final class Stop extends IdentityBean<AgencyAndId> {
   
   private static final int MISSING_VALUE = -999;
 
+  public static final int LOCATION_TYPE_STOP = 0;
+
+  public static final int LOCATION_TYPE_STATION = 1;
+
+  public static final int LOCATION_TYPE_ENTRANCE_EXIT = 2;
+
+  public static final int LOCATION_TYPE_NODE = 3;
+
+  public static final int LOCATION_TYPE_BOARDING_AREA = 4;
+
   @CsvField(mapping = DefaultAgencyIdFieldMappingFactory.class)
   private AgencyAndId id;
 
+  @CsvField(optional = true)
   private String name;
 
-  @CsvField(mapping = LatLonFieldMappingFactory.class)
-  private double lat;
+  @CsvField(mapping = LatLonFieldMappingFactory.class, optional = true)
+  private double lat = MISSING_VALUE;
 
-  @CsvField(mapping = LatLonFieldMappingFactory.class)
-  private double lon;
+  @CsvField(mapping = LatLonFieldMappingFactory.class, optional = true)
+  private double lon = MISSING_VALUE;
 
   @CsvField(optional = true)
   private String code;
@@ -131,6 +142,10 @@ public final class Stop extends IdentityBean<AgencyAndId> {
     this.desc = desc;
   }
 
+  public boolean isLatSet() {
+    return this.lat != MISSING_VALUE;
+  }
+
   public double getLat() {
     return lat;
   }
@@ -139,12 +154,24 @@ public final class Stop extends IdentityBean<AgencyAndId> {
     this.lat = lat;
   }
 
+  public void clearLat() {
+    this.lat = MISSING_VALUE;
+  }
+
+  public boolean isLonSet() {
+    return this.lon != MISSING_VALUE;
+  }
+
   public double getLon() {
     return lon;
   }
 
   public void setLon(double lon) {
     this.lon = lon;
+  }
+
+  public void clearLon() {
+    this.lon = MISSING_VALUE;
   }
 
   public String getZoneId() {
