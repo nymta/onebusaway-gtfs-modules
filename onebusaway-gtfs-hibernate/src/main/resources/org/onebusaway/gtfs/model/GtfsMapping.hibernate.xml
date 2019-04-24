@@ -112,9 +112,15 @@
             <column name="toStop_agencyId" length="50" />
             <column name="toStop_id" />
         </many-to-one>
-        <property name="pathwayType" />
+        <property name="pathwayMode" />
         <property name="traversalTime" />
-        <property name="wheelchairTraversalTime" />
+        <property name="isBidirectional" />
+        <property name="length" />
+        <property name="stairCount" />
+        <property name="maxSlope" />
+        <property name="minWidth" />
+        <property name="signpostedAs" />
+        <property name="reversedSignpostedAs" />
     </class>
     
     <class name="org.onebusaway.gtfs.model.Route" table="gtfs_routes">
