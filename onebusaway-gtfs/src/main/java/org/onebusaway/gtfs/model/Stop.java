@@ -19,6 +19,7 @@ package org.onebusaway.gtfs.model;
 import org.onebusaway.csv_entities.schema.annotations.CsvField;
 import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 import org.onebusaway.gtfs.serialization.mappings.DefaultAgencyIdFieldMappingFactory;
+import org.onebusaway.gtfs.serialization.mappings.EntityFieldMappingFactory;
 import org.onebusaway.gtfs.serialization.mappings.LatLonFieldMappingFactory;
 
 @CsvFields(filename = "stops.txt", prefix = "stop_")
@@ -83,6 +84,9 @@ public final class Stop extends IdentityBean<AgencyAndId> {
   @CsvField(name="platform_code", optional = true)
   private String platformCode;
 
+  @CsvField(name="level_id", optional=true, mapping = EntityFieldMappingFactory.class)
+  private Level level;
+
   // Custom extension for MTA
   @CsvField(optional = true, name = "mta_stop_id")
   private String mtaStopId;
@@ -107,6 +111,7 @@ public final class Stop extends IdentityBean<AgencyAndId> {
     this.timezone = obj.timezone;
     this.vehicleType = obj.vehicleType;
     this.platformCode = obj.platformCode;
+    this.level = obj.level;
     this.mtaStopId = obj.mtaStopId;
   }
 
@@ -257,6 +262,14 @@ public final class Stop extends IdentityBean<AgencyAndId> {
 
   public void setPlatformCode(String platformCode) {
     this.platformCode = platformCode;
+  }
+
+  public Level getLevel() {
+    return this.level;
+  }
+
+  public void setLevel(Level level) {
+    this.level = level;
   }
 
   public String getMtaStopId() { return mtaStopId; }
