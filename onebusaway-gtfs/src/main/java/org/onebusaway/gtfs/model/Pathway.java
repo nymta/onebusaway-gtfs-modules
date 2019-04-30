@@ -109,12 +109,20 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
     this.pathwayMode = pathwayMode;
   }
 
+  public boolean isTraversalTimeSet() {
+    return this.traversalTime != MISSING_VALUE;
+  }
+
   public void setTraversalTime(int traversalTime) {
     this.traversalTime = traversalTime;
   }
 
   public int getTraversalTime() {
     return traversalTime;
+  }
+
+  public void clearTraversalTime() {
+    this.traversalTime = MISSING_VALUE;
   }
 
   public int getIsBidirectional() {

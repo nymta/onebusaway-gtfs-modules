@@ -202,6 +202,10 @@
         <property name="vehicleType" />
         <property name="wheelchairBoarding" />
         <property name="platformCode" />
+        <many-to-one name="level">
+            <column name="level_agencyId" length="50" />
+            <column name="level_id" />
+        </many-to-one>
     </class>
 
     <class name="org.onebusaway.gtfs.model.StopTime" table="gtfs_stop_times">
@@ -304,6 +308,16 @@
         <property name="startDate" type="org.onebusaway.gtfs.impl.ServiceDateUserType" length="8"/>
         <property name="endDate" type="org.onebusaway.gtfs.impl.ServiceDateUserType" length="8"/>
         <property name="averageLoad" />
+    </class>
+
+    <class name="org.onebusaway.gtfs.model.Level" table="gtfs_levels">
+        <composite-id name="id" class="org.onebusaway.gtfs.model.AgencyAndId">
+            <key-property name="agencyId" length="50" />
+            <key-property name="id" />
+        </composite-id>
+
+        <property name="index" />
+        <property name="name" />
     </class>
 
 </hibernate-mapping>
