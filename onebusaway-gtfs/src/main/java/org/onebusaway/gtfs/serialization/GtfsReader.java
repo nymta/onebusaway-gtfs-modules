@@ -79,6 +79,7 @@ public class GtfsReader extends CsvEntityReader {
     _entityClasses.add(Transfer.class);
     _entityClasses.add(FeedInfo.class);
     _entityClasses.add(Ridership.class);
+    _entityClasses.add(Translation.class);
 
     CsvTokenizerStrategy tokenizerStrategy = new CsvTokenizerStrategy();
     tokenizerStrategy.getCsvParser().setTrimInitialWhitespace(true);
@@ -96,6 +97,14 @@ public class GtfsReader extends CsvEntityReader {
     ctx.put(KEY_CONTEXT, _context);
 
     addEntityHandler(new EntityHandlerImpl());
+  }
+
+  public void setLastModifiedTime(Long lastModifiedTime) {
+    if (lastModifiedTime != null)
+      getContext().put("lastModifiedTime", lastModifiedTime);
+  }
+  public Long getLastModfiedTime() {
+    return (Long)getContext().get("lastModifiedTime");
   }
 
   public List<Agency> getAgencies() {
@@ -202,7 +211,8 @@ public class GtfsReader extends CsvEntityReader {
     throw new EntityReferenceNotFoundException(entityType, entityId);
   }
 
-  /****
+
+    /****
    * Private Internal Classes
    ****/
 

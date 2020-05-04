@@ -43,6 +43,7 @@ public class GtfsEntitySchemaFactory {
     entityClasses.add(Level.class);
     entityClasses.add(Stop.class);
     entityClasses.add(Trip.class);
+    entityClasses.add(Note.class);
     entityClasses.add(StopTime.class);
     entityClasses.add(ServiceCalendar.class);
     entityClasses.add(ServiceCalendarDate.class);
@@ -64,6 +65,7 @@ public class GtfsEntitySchemaFactory {
     comparators.put(Route.class, getComparatorForIdentityBeanType(Route.class));
     comparators.put(Stop.class, getComparatorForIdentityBeanType(Stop.class));
     comparators.put(Trip.class, getComparatorForIdentityBeanType(Trip.class));
+    comparators.put(Note.class, getComparatorForIdentityBeanType(Note.class));
     comparators.put(StopTime.class, new StopTimeComparator());
     comparators.put(ShapePoint.class, new ShapePointComparator());
     comparators.put(ServiceCalendar.class, new ServiceCalendarComparator());

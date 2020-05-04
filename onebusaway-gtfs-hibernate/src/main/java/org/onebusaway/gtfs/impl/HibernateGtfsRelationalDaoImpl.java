@@ -235,6 +235,11 @@ public class HibernateGtfsRelationalDaoImpl implements GtfsMutableRelationalDao 
     return _ops.find("from Area");
   }
 
+  @Override
+  public Collection<Translation> getAllTranslations() {
+    return _ops.find("from Translation");
+  }
+
   /****
    * {@link GtfsRelationalDao} Interface
    ****/

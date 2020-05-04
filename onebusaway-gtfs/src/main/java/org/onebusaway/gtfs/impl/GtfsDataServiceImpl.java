@@ -309,6 +309,11 @@ public class GtfsDataServiceImpl implements GtfsDataService {
     }
 
     @Override
+    public Collection<Translation> getAllTranslations() {
+        return _dao.getAllTranslations();
+    }
+
+    @Override
     public List<Ridership> getRidershipForTrip(AgencyAndId tripId) {
         return _dao.getRidershipForTrip(tripId);
     }

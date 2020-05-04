@@ -153,4 +153,11 @@ public interface GtfsDao extends GenericDao {
    ****/
 
   public Collection<Area> getAllAreas();
+
+  /****
+   * {@link Translation} Methods
+   ****/
+
+  public Collection<Translation> getAllTranslations();
+
 }

@@ -249,6 +249,9 @@ public class TransformFactory {
         else if (opType.equals("verify_route_service")) {
           handleTransformOperation(line, json, new VerifyRouteService());
         }
+        else if (opType.equals("verify_bus_service")) {
+          handleTransformOperation(line, json, new VerifyBusService());
+        }
         else if (opType.equals("update_stoptimes_for_time")) {
           handleTransformOperation(line, json, new UpdateStopTimesForTime());
         }
@@ -264,8 +267,32 @@ public class TransformFactory {
         else if (opType.equals("check_for_future_service")){
           handleTransformOperation(line, json, new CheckForFutureService());
         }
+        else if (opType.equals("check_for_plausible_stop_times")){
+          handleTransformOperation(line,json, new CheckForPlausibleStopTimes());
+        }
+        else if (opType.equals("check_for_stop_times_without_stops")){
+          handleTransformOperation(line,json, new CheckForPlausibleStopTimes());
+        }
+        else if (opType.equals("anomaly_check_future_trip_counts")){
+          handleTransformOperation(line,json, new AnomalyCheckFutureTripCounts());
+        }
         else if (opType.equals("verify_future_route_service")){
           handleTransformOperation(line, json, new VerifyFutureRouteService());
+        }
+        else if (opType.equals("verify_reference_service")){
+          handleTransformOperation(line, json, new VerifyReferenceService());
+        }
+        else if (opType.equals("sanitize_for_api_access")){
+          handleTransformOperation(line, json, new SanitizeForApiAccess());
+        }
+        else if (opType.equals("add_omny_subway_data")) {
+          handleTransformOperation(line, json, new AddOmnySubwayData());
+        }
+        else if (opType.equals("add_omny_lirr_data")) {
+          handleTransformOperation(line, json, new AddOmnyLIRRData());
+        }
+        else if (opType.equals("add_omny_bus_data")) {
+          handleTransformOperation(line, json, new AddOmnyBusData());
         }
         else if (opType.equals("transform")) {
           handleTransformOperation(line, json);
@@ -282,7 +309,7 @@ public class TransformFactory {
   }
 
   /****
-   * Private Method
+   * Private Method *
    ****/
 
   private void handleAddOperation(String line, JSONObject json)

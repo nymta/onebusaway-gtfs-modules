@@ -27,6 +27,9 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
 
   private static final int MISSING_VALUE = -999;
 
+  @Deprecated
+  public static final int MODE_LINK = 0;
+
   public static final int MODE_WALKWAY = 1;
 
   public static final int MODE_STAIRS = 2;
@@ -43,6 +46,9 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
 
   @CsvField(name = "pathway_id", mapping = DefaultAgencyIdFieldMappingFactory.class)
   private AgencyAndId id;
+
+  @Deprecated @CsvField(optional = true)
+  private int pathwayType;
 
   @CsvField(name = "from_stop_id", mapping = EntityFieldMappingFactory.class)
   private Stop fromStop;
@@ -74,6 +80,12 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
 
   @CsvField(optional = true)
   private String reversedSignpostedAs;
+
+  @Deprecated @CsvField(optional = true)
+  private int wheelchairTraversalTime = MISSING_VALUE;
+
+  @Deprecated @CsvField(optional = true)
+  private String pathwayCode;
 
   @Override
   public AgencyAndId getId() {
@@ -122,7 +134,7 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
   }
 
   public void clearTraversalTime() {
-    this.traversalTime = MISSING_VALUE;
+     this.traversalTime = MISSING_VALUE;
   }
 
   public int getIsBidirectional() {
@@ -134,19 +146,20 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
   }
 
   public boolean isLengthSet() {
-    return length != MISSING_VALUE;
+      return length != MISSING_VALUE;
   }
 
   public double getLength() {
-    return length;
+      return length;
   }
+
 
   public void setLength(double length) {
     this.length = length;
   }
 
   public void clearLength() {
-    length = MISSING_VALUE;
+      length = MISSING_VALUE;
   }
 
   public boolean isStairCountSet() {
@@ -213,9 +226,50 @@ public final class Pathway extends IdentityBean<AgencyAndId> {
     this.reversedSignpostedAs = reversedSignpostedAs;
   }
 
-
   @Override
   public String toString() {
     return "<Pathway " + this.id + ">";
   }
+
+  @Deprecated
+  public void setWheelchairTraversalTime(int wheelchairTraversalTime) {
+    this.wheelchairTraversalTime = wheelchairTraversalTime;
+  }
+
+  @Deprecated
+  public int getWheelchairTraversalTime() {
+    return wheelchairTraversalTime;
+  }
+
+  @Deprecated
+  public boolean isWheelchairTraversalTimeSet() {
+    return wheelchairTraversalTime != MISSING_VALUE;
+  }
+
+  @Deprecated
+  public void clearWheelchairTraversalTime() {
+    this.wheelchairTraversalTime = MISSING_VALUE;
+  }
+
+  @Deprecated
+  public String getPathwayCode() {
+    return pathwayCode;
+  }
+
+  @Deprecated
+  public void setPathwayCode(String pathwayCode) {
+    this.pathwayCode = pathwayCode;
+  }
+
+  @Deprecated
+  public void setPathwayType(int pathwayType) {
+    this.pathwayType = pathwayType;
+  }
+
+  @Deprecated
+  public int getPathwayType() {
+    return pathwayType;
+  }
+
+
 }

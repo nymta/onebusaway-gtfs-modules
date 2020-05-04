@@ -22,6 +22,7 @@ import org.onebusaway.gtfs.model.*;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
 import org.onebusaway.gtfs.services.GtfsMutableRelationalDao;
 import org.onebusaway.gtfs.services.calendar.CalendarService;
+import org.onebusaway.gtfs_transformer.services.CloudContextService;
 import org.onebusaway.gtfs_transformer.services.GtfsTransformStrategy;
 import org.onebusaway.gtfs_transformer.services.TransformContext;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class CountAndTestBus implements GtfsTransformStrategy {
         GtfsMutableRelationalDao reference = (GtfsMutableRelationalDao) context.getReferenceReader().getEntityStore();
         CalendarService refCalendarService = CalendarServiceDataFactoryImpl.createService(reference);
         String agency = dao.getAllTrips().iterator().next().getId().getAgencyId();
+        String name = dao.getAllAgencies().iterator().next().getName();
 
         HashMap<String, Route> referenceRoutes = new HashMap<>();
         for (Route route : reference.getAllRoutes()) {
@@ -156,12 +158,13 @@ public class CountAndTestBus implements GtfsTransformStrategy {
         int refTripsThisWeekWithSdon = 0;
         int refTripsThisWeekWoutSdonWithA9 = 0;
         int refTripsThisWeekWoutSdonWithE9 = 0;
+        int refTripsThisWeekWoutSdonWithD9 = 0;
         int refTripsThisWeekWoutSdonWithB9 = 0;
+        int refTripsThisWeekWoutSdonWithH9 = 0;
         int checkMatchesThisWeek = 0;
         int doesntMatchThisWeek = 0;
         int leftOverNoMatchThisWeek = 0;
         List<String> refTripsMissingATIS = new ArrayList<String>();
-        _log.info("Ref trips that don't match atis and aren't SDon: ");
         for (Trip refTrip : reference.getAllTrips()) {
             //count number of reference trips this week
             Set<ServiceDate> activeDates = refCalendarService.getServiceDatesForServiceId(refTrip.getServiceId());
@@ -174,15 +177,21 @@ public class CountAndTestBus implements GtfsTransformStrategy {
                         refTripsThisWeekWithSdon++;
                     } else if (refTrip.getId().getId().contains("A9")) {
                         refTripsThisWeekWoutSdonWithA9++;
-                    } else if (refTrip.getId().getId().contains("E9")) {
-                        refTripsThisWeekWoutSdonWithE9++;
                     }
                     else if (refTrip.getId().getId().contains("B9")) {
                         refTripsThisWeekWoutSdonWithB9++;
                     }
+                    else if (refTrip.getId().getId().contains("D9")) {
+                        refTripsThisWeekWoutSdonWithD9++;
+                    }
+                    else if (refTrip.getId().getId().contains("E9")) {
+                        refTripsThisWeekWoutSdonWithE9++;
+                    }
+                    else if (refTrip.getId().getId().contains("H9")) {
+                        refTripsThisWeekWoutSdonWithH9++;
+                    }
                     else {
                         leftOverNoMatchThisWeek++;
-                        _log.info(refTrip.getId().getId());
                     }
                 } else {
                     matchingTripsThisWeek++;
@@ -217,8 +226,8 @@ public class CountAndTestBus implements GtfsTransformStrategy {
         _log.info("ATIS Trips: {}, Reference: {}, match: {}, In ref NotInATIS: {}, In ref NotInATIS Sdon: {}, In ref NotInATIS not Sdon is H9: {}, Current Service: {}", dao.getAllTrips().size(), reference.getAllTrips().size(), matches, noMatch, refTripsWithSdon, refTripsWoutSdonWithh9, curSerTrips);
         _log.info("ATIS Trips this week {}, Reference trips this week {}, ATIS Trips this week that are also Reference Trips this week {}", atisTripsThisWeek, refTripsThisWeek, matchingTripsThisWeek);
         _log.info("Matches this week {}", matchingTripsThisWeek);
-        _log.info("This week matches: {}. This week doesn't match {}, in ref NotInATIS Sdon: {}, In ref NotInATIS not Sdon is A9: {}, E9: {}, B9: {} Leftover: {}",
-                matchingTripsThisWeek, doesntMatchThisWeek, refTripsThisWeekWithSdon, refTripsThisWeekWoutSdonWithA9, refTripsThisWeekWoutSdonWithE9, refTripsThisWeekWoutSdonWithB9, leftOverNoMatchThisWeek);
+        _log.info("This week matches: {}. This week doesn't match {}, in ref NotInATIS Sdon: {}, In ref NotInATIS not Sdon is A9: {}, B9: {} E9: {}, H9: {}, Leftover: {}",
+                matchingTripsThisWeek, doesntMatchThisWeek, refTripsThisWeekWithSdon, refTripsThisWeekWoutSdonWithA9, refTripsThisWeekWoutSdonWithB9, refTripsThisWeekWoutSdonWithE9, refTripsThisWeekWoutSdonWithH9, leftOverNoMatchThisWeek);
 
         _log.info("Stops: {}, Stop times {}, Trips w/ st: {}, Trips w/out st: {}", dao.getAllStops().size(), dao.getAllStopTimes().size(), countSt, countNoSt);
         _log.info("Calendar dates: {}, Trips w/cd {}, Trips w/out cd: {}", dao.getAllCalendarDates().size(), countCd, countNoCd);
@@ -233,29 +242,42 @@ public class CountAndTestBus implements GtfsTransformStrategy {
         _log.info("ATIS Stops: {}, Reference: {}, ATIS match to reference: {}", dao.getAllStops().size(), reference.getAllStops().size(), matches);
 
         ExternalServices es =  new ExternalServicesBridgeFactory().getExternalServices();
-        es.publishMetric(getNamespace(), "ATISBusTripsThisWeek", null, null, atisTripsThisWeek);
-        es.publishMetric(getNamespace(), "refBusTripsThisWeek", null, null, refTripsThisWeek);
-        es.publishMetric(getNamespace(), "matchingBusTripsThisWeek", null, null, matchingTripsThisWeek);
+        String feed = CloudContextService.getLikelyFeedName(dao);
+
+        es.publishMetric(CloudContextService.getNamespace(), "ATISBusTripsThisWeek", "feed",feed, atisTripsThisWeek);
+        es.publishMetric(CloudContextService.getNamespace(), "refBusTripsThisWeek", "feed",feed, refTripsThisWeek);
+        es.publishMetric(CloudContextService.getNamespace(), "matchingBusTripsThisWeek", "feed",feed, matchingTripsThisWeek);
+        es.publishMetric(CloudContextService.getNamespace(), "SdonBusTripsThisWeek","feed",feed, refTripsThisWeekWithSdon);
+        es.publishMetric(CloudContextService.getNamespace(), "A9BusTripsThisWeek", "feed",feed, refTripsThisWeekWoutSdonWithA9);
+        es.publishMetric(CloudContextService.getNamespace(), "B9BusTripsThisWeek", "feed",feed, refTripsThisWeekWoutSdonWithB9);
+        es.publishMetric(CloudContextService.getNamespace(), "D9BusTripsThisWeek", "feed",feed, refTripsThisWeekWoutSdonWithD9);
+        es.publishMetric(CloudContextService.getNamespace(), "E9BusTripsThisWeek", "feed",feed, refTripsThisWeekWoutSdonWithE9);
+        es.publishMetric(CloudContextService.getNamespace(), "H9BusTripsWitThisWeek", "feed",feed, refTripsThisWeekWoutSdonWithH9);
+        es.publishMetric(CloudContextService.getNamespace(), "OtherTripsWithoutMatchThisWeek", "feed",feed, leftOverNoMatchThisWeek);
 
         if (curSerTrips < 1) {
-            es.publishMessage(getTopic(), "Agency: "
-                    + dao.getAllAgencies().iterator().next().getId()
-                    + " "
-                    + dao.getAllAgencies().iterator().next().getName()
-                    + " has no current service!");
             throw new IllegalStateException(
                     "There is no current service!!");
         }
+        es.publishMetric(CloudContextService.getNamespace(),"TripsInServiceToday","feed", feed,curSerTrips);
 
         if (countNoHs > 0) {
-            es.publishMessage(getTopic(), "Agency: "
-                    + dao.getAllAgencies().iterator().next().getId()
-                    + " "
-                    + dao.getAllAgencies().iterator().next().getName()
-                    + " has trips w/out headsign: "
-                    + countNoHs);
-            es.publishMetric(getNamespace(), "noHeadsigns", null, null, countNoHs);
             _log.error("There are trips with no headsign");
+        }
+        es.publishMetric(CloudContextService.getNamespace(), "TripsWithoutHeadsigns", "feed", feed, countNoHs);
+
+        HashSet<String> ids = new HashSet<String>();
+        for (Stop stop : dao.getAllStops()) {
+            //check for duplicate stop ids.
+            if (ids.contains(stop.getId().getId())) {
+                if (ids.contains(stop.getId().getId())) {
+                    _log.error("Duplicate stop ids! Agency {} stop id {}", agency, stop.getId().getId());
+                    es.publishMultiDimensionalMetric(CloudContextService.getLikelyFeedName(dao),"DuplicateStopIds", new String[]{"feed","stopId"}, new String[] {feed,stop.getId().toString()},1);
+                }
+            }
+            else {
+                ids.add(stop.getId().getId());
+            }
         }
     }
 
@@ -310,13 +332,5 @@ public class CountAndTestBus implements GtfsTransformStrategy {
         Date date1 = calendar.getTime();
         date1 = removeTime(date1);
         return date1;
-    }
-
-    private String getTopic() {
-        return System.getProperty("sns.topic");
-    }
-
-    private String getNamespace() {
-        return System.getProperty("cloudwatch.namespace");
     }
 }
